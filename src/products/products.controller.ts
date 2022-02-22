@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Product } from './product.model';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -11,18 +12,17 @@ export class ProductsController {
     @Body('title') prodTitle: string,
     @Body('description') prodDesc: string,
     @Body('price') prodPrice: number
-  ): any {
-	  const generatedId: string = this.productsService.insertProduct(prodTitle, prodDesc, prodPrice);
-    return { id: generatedId };
+  ): Product {
+	  return this.productsService.insertProduct(prodTitle, prodDesc, prodPrice);
 	}
 
   @Get()
-  getAllProducts() {
+  getAllProducts(): Promise<Product[]> {
     return this.productsService.getProducts();
   }
 
   @Get(':id')
-  getProduct(@Param('id') prodId: string) {
+  getProduct(@Param('id') prodId: string): Promise<Product> {
     return this.productsService.getSingleProduct(prodId);
   }
 
@@ -32,14 +32,12 @@ export class ProductsController {
     @Body('title') prodTitle: string,
     @Body('description') prodDesc: string,
     @Body('price') prodPrice: number
-  ) {
-    this.productsService.updateProduct(prodId, prodTitle, prodDesc, prodPrice);
-    return null;
+  ): Promise<Product> {
+    return this.productsService.updateProduct(prodId, prodTitle, prodDesc, prodPrice);
   }
 
   @Delete(':id')
-  removeProduct(@Param('id') prodId: string) {
-    this.productsService.deleteProduct(prodId);
-    return null;
+  removeProduct(@Param('id') prodId: string): Promise<boolean> {
+    return this.productsService.deleteProduct(prodId);
   }
 }
