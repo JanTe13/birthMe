@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import { Product } from './product.model';
 import { ProductsService } from './products.service';
 
@@ -12,17 +13,17 @@ export class ProductsController {
     @Body('title') prodTitle: string,
     @Body('description') prodDesc: string,
     @Body('price') prodPrice: number
-  ): Product {
+  ): Observable<Product> {
 	  return this.productsService.insertProduct(prodTitle, prodDesc, prodPrice);
 	}
 
   @Get()
-  getAllProducts(): Promise<Product[]> {
+  getAllProducts(): Observable<Product[]> {
     return this.productsService.getProducts();
   }
 
   @Get(':id')
-  getProduct(@Param('id') prodId: string): Promise<Product> {
+  getProduct(@Param('id') prodId: string): Observable<Product> {
     return this.productsService.getSingleProduct(prodId);
   }
 
@@ -32,12 +33,12 @@ export class ProductsController {
     @Body('title') prodTitle: string,
     @Body('description') prodDesc: string,
     @Body('price') prodPrice: number
-  ): Promise<Product> {
+  ): Observable<Product> {
     return this.productsService.updateProduct(prodId, prodTitle, prodDesc, prodPrice);
   }
 
   @Delete(':id')
-  removeProduct(@Param('id') prodId: string): Promise<boolean> {
+  removeProduct(@Param('id') prodId: string): Observable<boolean> {
     return this.productsService.deleteProduct(prodId);
   }
 }
