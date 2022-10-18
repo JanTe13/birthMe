@@ -11,12 +11,11 @@ interface ProductData {
 @Injectable()
 export class ProductsService {
 
-  insertProduct(title: string, desc: string, price: number): Observable<Product> {
-    const productId = title.replace(' ', '');
-    const newProduct: Product = new Product(productId, title, desc, price);
-    return from(admin.database().ref('products').push(newProduct)).pipe(map(
+  insertProduct(product: Product): Observable<Product> {
+    product.id = product.title.replace(' ', '');
+    return from(admin.database().ref('products').push(product)).pipe(map(
       () => {
-        return newProduct;
+        return product;
       }));
   }
 
@@ -40,12 +39,12 @@ export class ProductsService {
       }));
   }
 
-  updateProduct(productId: string, title: string, desc: string, price: number): Observable<Product> {
+  updateProduct(productId: string, product: Product): Observable<Product> {
     return this.findProduct(productId).pipe(map(
       (response: ProductData) => {
-        if (title) response.product.title = title;
-        if (desc) response.product.description = desc;
-        if (price) response.product.price = price;
+        if (product.title) response.product.title = product.title;
+        if (product.description) response.product.description = product.description;
+        if (product.price) response.product.price = product.price;
         admin.database().ref('products').child(response.productKey).update(response.product);
         return response.product;
       }));
@@ -74,11 +73,12 @@ export class ProductsService {
   }
 
   private parseToProduct(value: any): Product {
-    return new Product(
-      value.id,
-      value.title,
-      value.description,
-      value.price
-    );
+    const newProduct = new Product();
+    newProduct.id = value.id;
+    newProduct.title = value.title;
+    newProduct.description = value.description;
+    newProduct.price = value.price;
+
+    return newProduct;
   }
 }

@@ -8,19 +8,17 @@ export class ProductsController {
 
   constructor(private productsService: ProductsService) { }
 
-  @Post()
-  addProduct(
-    @Body('title') prodTitle: string,
-    @Body('description') prodDesc: string,
-    @Body('price') prodPrice: number
-  ): Observable<Product> {
-	  return this.productsService.insertProduct(prodTitle, prodDesc, prodPrice);
-	}
-
   @Get()
   getAllProducts(): Observable<Product[]> {
     return this.productsService.getProducts();
   }
+
+  @Post()
+  addProduct(
+    @Body() product: Product 
+  ): Observable<Product> {
+	  return this.productsService.insertProduct(product);
+	}
 
   @Get(':id')
   getProduct(@Param('id') prodId: string): Observable<Product> {
@@ -30,11 +28,9 @@ export class ProductsController {
   @Patch(':id')
   updateProduct(
     @Param('id') prodId: string,
-    @Body('title') prodTitle: string,
-    @Body('description') prodDesc: string,
-    @Body('price') prodPrice: number
+    @Body() product: Product
   ): Observable<Product> {
-    return this.productsService.updateProduct(prodId, prodTitle, prodDesc, prodPrice);
+    return this.productsService.updateProduct(prodId, product);
   }
 
   @Delete(':id')
